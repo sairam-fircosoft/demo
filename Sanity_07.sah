@@ -1,0 +1,42 @@
+/* Updation/Deletion of new profile
+
+$URL: TRUST Application url
+$USER_NAME: User name
+$PASSWORD: Password
+$MODULE_NAME : Administration
+$STATE: TRUE
+$DECISION: TRUE_FROM_NEW
+$PROFILE_VAL[1]: CREATION
+$PROFILE: New Profile
+$PROFILE_DESCRIPTION: Description of Newly created profile
+$PROFILE_VAL[2]: UPDATE
+$PROFILE_VAL[3]: DELETE
+$TYPE: Profile
+$FROM_DATE : Search to be performed From date
+$TO_DATE: Search to be performed till date
+
+*/
+
+_include("Common.sah");
+	
+initBrowser();
+
+login($URL, $USER_NAME, $PASSWORD); 
+
+createProfile($MODULE_NAME[0], $PROFILE, $PROFILE_DESCRIPTION, $STATE[0], $DECISION[0], $SHORT_WAIT, $PROFILE_VAL[1]);
+
+update_delete_Profile($PROFILE, $PROFILE_DESCRIPTION, $PROFILE_VAL[2]);
+
+update_delete_Profile($PROFILE, $PROFILE_DESCRIPTION, $PROFILE_VAL[3]);
+
+_click(_link("Back"));
+
+_click(_link("Back"));
+
+audit_Log($MODULE_NAME[1],$TYPE[1], $FROM_DATE, $TO_DATE);
+
+_assertVisible(_cell("UPDATE", _under(_div($PROFILE))));
+
+_assertVisible(_cell("DELETION", _under(_div($PROFILE))));
+
+logout();

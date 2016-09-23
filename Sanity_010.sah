@@ -1,0 +1,32 @@
+/*  
+
+User Connection - Login Screen
+
+$URL: TRUST Application url
+$USER_NAME: User name
+$PASSWORD: Password
+$MODULE_NAME : User Management
+$SHORT_WAIT: 5000
+$STATE_NAME : State Name from Parametter file
+$STATE_VAL : Operation (create, delete and modify) 
+$STATE_DECISION : FINAL STATE OR CONTROL TRANSITION while state creation
+
+
+*/
+
+
+_include("Common.sah");
+	
+initBrowser();
+
+login($URL, $USER_NAME, $PASSWORD); 
+
+create_State($STATE_VAL[1], $SHORT_WAIT, $STATE_NAME, $STATE_LABEL, $STATE_DESCRIPTION, $STATE_DECISION[0], $STATE_BEHAVIOUR[1], $STATE_NAME1, $STATE_LABEL1, $MODIFIED_STATE_DESCRIPTION );
+
+_click(_link("Back"));
+
+_click(_link("Back"));
+
+create_Transition( $STATE_NAME, $STATE_NAME , $TRANS_VAL[1]);
+
+logout(); 

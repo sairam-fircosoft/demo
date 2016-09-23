@@ -1,0 +1,20 @@
+/* Welcome page is displayed with different action buttons
+
+Validate whether welcome page displays all the different action buttons
+
+$URL: TRUST Application url
+$USER_NAME: User name
+$PASSWORD: Password
+$COLUMN_LIST : Column Liist of TRUST
+
+*/
+
+_include("Common.sah");
+	
+initBrowser();
+
+login($URL, $USER_NAME, $PASSWORD); 
+
+display_Welcome($COLUMN_LIST[0]);
+
+logout();

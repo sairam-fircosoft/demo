@@ -1,0 +1,26 @@
+Environment #1  Trust V4.5.5.0_200 
+Expected tests	FullNR 
+Data Base	Qavm209 TRUST_454_FROM_4531/sa/Hello00 
+Application Server	WEBSPHERE(Windows/qavm209)
+URL	http://10.19.4.11:9080/trust/
+(#admin1/ Hello00)
+Back-ends	C:\QA\TEST_TRUST_455_WINDOWS\FIRCO-OFAC-FILTER-FFF-455_0_WINDOWS
+
+
+Environment #1  Trust V4.5.5.0_200 
+Expected tests	FullNR 
+Data Base	Qavm204 TRUST_454_FROM_4531/hello00/PDBORCL 
+Application Server	Weblogic (Windows/qavm204)
+URL	http://10.19.4.6:4550/TRUST/
+(#admin1/ Hello00)
+Back-ends	/home/firco_test/fipnas/test/TEST_TRUST_455_AIX/FIRCO-OFAC-FILTER-FFF-455_0_AIX
+
+Create two users $USER_NAME:User1, $ADMIN_USER:User2
+Create user TEST $TEST_USER = "TEST";
+$ADMIN_USER user update in common.sah
+Emergency Procedures right remove from ALL_RIGHTS
+emergencyProcedures_ResetUserPassword function
+create language ENGLISH, FRENCH
+current date update in parameter.sah
+add application url in browser
+testrunner.bat TrustSanity/Sanity.suite http://10.19.4.11:4550/trust/ ie

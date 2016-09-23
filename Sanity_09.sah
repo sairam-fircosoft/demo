@@ -1,0 +1,41 @@
+/* Reports - Create Report
+Verify whether user is able to create a report by selecting All reports as a report mode and All Units
+Verify All created reports are getting displayed in the list reports
+
+$URL: TRUST Application url
+$USER_NAME: User name
+$PASSWORD: Password
+$MODULE_NAME[2]: Reports
+$REPORT_NAME: New Report name
+$TEMPLATE: FOFDBS.ftr(Default)
+$MODE[0] : All reports
+$AVAILABLE_UNITS[0]: ALL
+$REPORT_VAL[0]: CREATE
+*/
+
+
+
+_include("Common.sah");
+	
+initBrowser();
+
+login($URL, $USER_NAME, $PASSWORD); 
+
+reports($MODULE_NAME[2], $REPORT_NAME, $TEMPLATE, $MODE[0], $AVAILABLE_UNITS[0], $REPORT_VAL[0]);
+
+//_assertVisible(_cell("UPDATE", _under(_div($PROFILE))));
+
+//_assertExists(_cell("/ "+$REPORT_NAME +.*_/""));
+
+var $reportName = _getText(_cell(10));
+
+_assertExists(_cell($reportName));
+
+var $createReport=_getText(_cell(10));
+
+_log($createReport);
+
+logout();
+
+
+

@@ -1,0 +1,984 @@
+_include("Parameters.sah");
+
+/*
+write the failure message in to the log file and stop the execution 
+*/
+function onScriptFailure($ex) 
+{
+	if (_isVisible(_link("Log Out")))
+		_click(_link("Log Out"));
+		
+	_logExceptionAsFailure($ex); // Explicitly log the exception as failure.
+	_stop();
+}
+
+/*
+
+This initBrowser function is used to set the  browser in ready state for execution.
+
+*/
+
+function initBrowser()
+{
+	if(_isFF() || _isIE())
+	{
+	_windowAction("maximize"); // maximize window.
+	_setXHRReadyStatesToWaitFor("2,3") 
+	}
+}
+
+/*
+
+This Login function is used to log into the Application with the specified URL and Credentials.
+
+param: 
+	$URL : URL of TRUST
+	$Username : user name 
+	$Password : password
+	
+*/
+
+
+function login($url, $user_Name, $password)
+{
+	try
+	{
+		_navigateTo($url);
+		_setValue(_textbox("login"), $user_Name);
+		_setValue(_password("password"), $password);
+
+		_click(_imageSubmitButton(0));
+		_wait(5000);
+	
+		//if((_setValue(_textbox("login"), "")) || (_setValue(_textbox("password"), "")))
+		//{
+			//_assertVisible(_cell("Both fields are mandatory"));
+		//} 
+		if(_exists(_cell("Access denied: already connected")))
+		{
+			_assertExists(_cell("Access denied: already connected"));
+			_wait(5000);
+			_windowAction("refresh"); // refresh window.
+			_navigateTo($url);
+			_setValue(_textbox("login"), "KUMAR");
+			_setValue(_password("password"), "Hello00");
+			_click(_imageSubmitButton(0));
+			_wait(5000);
+			_click(_span("Administration"));
+			_click(_span("Emergency Procedures"));
+			_wait(5000);
+			_click(_submit("Validate[1]"));
+			_assertEqual("Are you sure you want to disconnect (all users) ?", _lastConfirm());
+			_click(_submit("Validate[1]"));
+			_assertExists(_div("All users belonging to the following units have been disconnected: ALL"));
+			logout();
+			login($url, $user_Name, $password)
+		}
+		else
+		{
+			_log("Login sucessfull");
+		}
+	}
+	catch(ex)
+	{
+		_assert(!("Error in Login function")); 
+	}	
+}
+
+/*
+
+This Logout function will logout the user from the application. 
+
+*/
+
+function logout()
+{
+	if (_isVisible(_link("Log Out")))
+	//_highlight(_link("Log Out"));
+		_click(_link("Log Out"));
+		
+}
+/* The function login_Validation is used to validate error message in Username and Password field by giving wrong credentials and negative vvalues
+
+param: 
+	$URL : URL of TRUST
+	$Username : user name 
+	$Password : password
+	
+	
+	*/
+	
+function login_Validation($url, $user_Name, $password, $login_Val){
+	try{
+		if($login_Val == "VALIDATION1"){
+			_navigateTo($url);
+			_setValue(_textbox("login"), "");
+			_setValue(_password("password"), "");
+
+			_click(_imageSubmitButton(0));
+			_assertExists(_cell("Both fields are mandatory"));
+		} if($login_Val == "VALIDATION2"){
+			_navigateTo($url);
+			_setValue(_textbox("login"), $user_Name);
+			_setValue(_password("password"), $password);
+
+			_click(_imageSubmitButton(0));
+			_assertExists(_cell("Access denied"));
+		} if($login_Val == "VALIDATION3"){
+				_navigateTo($url);
+			_setValue(_textbox("login"), "");
+			_setValue(_password("password"), "");
+
+			_click(_imageSubmitButton(0));
+			_assertExists(_cell("Both fields are mandatory"));		
+		}  if($login_Val == "VALIDATION4"){
+				_navigateTo($url);
+			_setValue(_textbox("login"), "");
+			_setValue(_password("password"), "");
+
+			_click(_imageSubmitButton(0));
+			_assertExists(_cell("Access denied"));		
+		}	
+	}catch(ex){
+	
+				_assert(!("Error in login_Validation function")); 
+	}
+
+
+
+
+
+
+}
+/* This login_UserCreation creates a new user, assigns a new profile and assigns the avilable unit.
+
+Param:
+	$module_Name : User can specify any module which user wants to create view.(Module name are listed in the Parameter file)
+	$new_UserName : New User New Password
+	$new_Password : New Password
+	$confirm_Password : Password Confirmation
+	$short_Wait : Wait Period 
+	$profile : Name of the profile associated with the user.
+	$lang : Languauge
+	$avail_Unit : Unit Availabble for the User
+	$avail_Unit : Column list for Menu
+	$url :URL
+	
+	*/
+function createUser($module_Name, $short_Wait, $new_UserName, $new_Password, $confirm_Password, $lang, $profile, $avail_Unit, $button_Val){
+		try{
+		
+					_click(_span($module_Name));
+					_click(_span("User Management"));
+					
+					//_wait($short_wait);
+					_click(_span("User"));
+					
+					if($button_Val == "VALIDATION"){
+					_log("Inside validation")
+							_setValue(_textbox("login")," ");
+							_setValue(_password("password"), " ");
+							_setValue(_password("confirmPassword"), " ");
+							_setSelected(_select("langId"), " ");
+							_setSelected(_select("profileId"), " ");
+							_setSelected(_select("availableUnits"), " ");
+							_click(_button(">>"));
+							_click(_submit("Create"));
+							//_wait($short_Wait);
+							
+							_assertExists(_div("'Login' is required."));
+							_assertExists(_div("User must have at least one unit"));
+					} if($button_Val == "CREATION"){
+						_log("Inside creation")
+							_setValue(_textbox("login"), $new_UserName);
+							_setValue(_password("password"), $new_Password);
+							_setValue(_password("confirmPassword"), $confirm_Password);
+							_setSelected(_select("langId"), $lang);
+							_setSelected(_select("profileId"), $profile);
+							_setSelected(_select("availableUnits"), $avail_Unit);
+							_click(_button(">>"));
+							_click(_submit("Create"));
+							//_wait($short_Wait);
+							
+					}
+					//if(_isVisible(_link("Welcome", _in(_cell("FFF Verify Web >> Welcome"))))){
+						//for($i=0; $i<$col_Values.length; $i++){
+								//_assertExists(_span($col_Values[i], _in(_table("menu"))));
+						//}
+			//}
+		}catch(ex){
+				_assert(!("Error in login_UserCreation function")); 
+		}
+
+}
+/* The below function creates a new profile
+Param:
+	$module_Name : User can specify any module which user wants to create view.(Module name are listed in the Parameter file)
+	$profile : Name of the profile associated with the user.
+	$profile_Description: Description of the new profile
+	$state: State_Name
+	$decision: Decision available
+	$short_Wait: Short wait
+	$profile_Val
+	*/
+function createProfile($module_Name, $profile, $profile_Description, $state, $decision, $short_Wait, $profile_Val){
+			try{
+			
+					_click(_span($module_Name));
+					_click(_span("User Management"));
+					_click(_span("Profile"));
+					_wait($short_Wait);
+					if($profile_Val == "VALIDATION"){
+						
+						_setValue(_textbox("name"), "");
+						_setValue(_textbox("description"), "");
+						_setSelected(_select("toStatesList"), "");
+						_setSelected(_select("availableDecisions"), "");
+						_click(_submit("Create"));
+						_wait($short_Wait);
+						
+						_assertExists(_div("app-messages"));
+					
+					}
+					if($profile_Val == "CREATION"){
+							
+							_setValue(_textbox("name"), $profile);
+							_setValue(_textbox("description"), $profile_Description);
+							
+							var $profile_List = _count("_option", "/.*/i", _in(_select("availableRights")));
+
+							for(var $i=0 ; $i < $profile_List; $i++){
+
+								_setSelected(_select("availableRights"),  "/.*/i["+$i+"]", true);
+							}
+							
+							_click(_button("buttonLeftToRightRights"));
+							
+							_setSelected(_select("toStatesList"), $state);
+							
+							var $decision_List = _count("_option", "/.*/i", _in(_select("availableDecisions")));
+							for(var $i=0 ; $i < $decision_List; $i++){
+
+								_setSelected(_select("availableDecisions"),  "/.*/i["+$i+"]", true);
+							}
+							
+							_click(_button("buttonLeftToRightDecisions"));
+							
+							_click(_submit("Create"));
+							_wait($short_Wait);
+							_assertVisible(_div("success"));
+			}
+			}catch(ex){
+					_assert(!("Error in Profile_Creation function")); 
+			}
+}
+/* Function to create a Unit for the associated workgroup
+Param:
+	$module_Name : User can specify any module which user wants to create view.(Module name are listed in the Parameter file)
+	$unit_Name: Unit Name
+	*/
+
+function createUnit($module_Name, $unit_Name, $comment, $unit_Val){
+	try{
+			
+			_click(_span($module_Name));
+			_click(_span("User Management"));
+			_click(_span("Unit"));
+			//_wait($short_Wait);
+			
+			if($unit_Val == "VALIDATION"){
+				_setValue(_textbox("name"), "");
+				_check(_checkbox("workgroupEnabled"));
+				_click(_submit("Create"));
+				//_wait($short_Wait);
+				
+				_assertVisible(_div("app-messages"));
+			}if($unit_Val == "CREATION"){
+				
+				_setValue(_textbox("name"),$unit_Name);
+				//_setValue(_textbox("name"), $unit_Name);
+				_uncheck(_checkbox("workgroupEnabled"));
+				_click(_submit("Create"));
+				_assertExists(_div("Unit successfully created"));
+				if(_assertExists(_div("Unit successfully created"))){
+						_assertExists(_submit("Modify"));
+						_assertExists(_submit("Delete"));
+						//_wait($short_Wait);
+						
+						_assertVisible(_row("New comment:"));
+						//_wait($short_Wait);
+						
+						_log("Unit has been successfully created");
+				
+				}
+				if(_isVisible(_row("New comment:"))){
+					_setValue(_textbox("comments"), $comment);
+					_click(_submit("Create"));
+					_setSelected(_select("commentId"), $comment);
+				}
+				_assertExists(_div("success"));
+				//_wait($short_Wait);
+				
+			} if($unit_Val == "MODIFICATION"){
+					_setSelected(_select("id"), $unit_Name);
+					_check(_checkbox("workgroupEnabled"));
+					_setValue(_textbox("comments"), $comment);
+					_click(_submit("Create"));
+					_setSelected(_select("commentId"), $comment);
+					
+					_assertExists(_div("success"));
+			} if($unit_Val == "DELETION"){
+					_setSelected(_select("id"), $unit_Name);
+					_expectConfirm("Do you really want to delete this unit?", true);
+					_click(_submit("Delete"));
+					
+					_assertVisible(_div("Unit "+ "'"+ $unit_Name+"'" + " successfully removed"));
+			}
+	}catch(ex){
+			_assert(!("Error in Unit_Creation function"));
+	
+	}
+
+}
+/* This function is to check whether welcome is displayed with default modules present
+
+*/
+function display_Welcome($column_List)
+{
+	try
+	{
+		if(_isVisible(_link("Welcome", _in(_cell("FFF Verify Web >> Welcome")))))
+		{
+			for ($i=0; $i<$column_List.length; $i++)
+			{
+				_assertExists(_span($column_List[$i]));
+			}
+		}
+	}
+	catch(ex)
+	{
+		_assert(!("Error in display_Welcome function")); 
+	}
+}
+/* users_List validates whether all the listed users in the application exists in the table format
+
+*/
+function users_List($module_Name, $user_Name, $profile, $from_Date, $to_Ddate, $date_Val)
+{
+	try
+	{
+		_click(_span($module_Name));
+		_click(_span("Users"));
+		if($date_Val == "VALIDATION")
+		{
+			_setSelected(_select("userId"), $user_Name);
+			_setSelected(_select("profileId"), $profile);
+			_setValue(_textbox("from"), "");
+			_setValue(_textbox("to"), "");
+			_click(_submit("Validate"));
+			var $rowCount = 0;
+			_set($rowCount, _table("border").rows.length);
+			_log($rowCount);
+			_assertExists(_table("border"));
+			
+		} 
+		if($date_Val == "DATE VALIDATION")
+		{
+			_setSelected(_select("userId"), $user_Name);
+			_setSelected(_select("profileId"), $profile);
+			_setValue(_textbox("from"), $from_Date);
+			_setValue(_textbox("to"), $to_Ddate);
+			_click(_submit("Validate"));
+			var $rowCount = 0;
+			_set($rowCount, _table("border").rows.length);
+			_log($rowCount);
+			_assertExists(_table("border"));
+			
+		}
+	}
+	catch(ex)
+	{
+		_assert(!("Error in users_List function")); 
+	}
+}
+/* function to check Database consistency
+
+*/
+function db_Consistency($module_Name)
+{
+	try
+	{
+		_click(_span($module_Name));
+		_click(_span("Database Management"));
+		
+		_check(_checkbox("allUnitDefined"));
+		_click(_submit("Validate"));
+		_assertExists(_div("success"));
+		
+		_uncheck(_checkbox("allUnitDefined"));
+		_click(_submit("Validate"));
+		_assertExists(_div("error"));
+	}
+	catch(ex)
+	{
+		_assert(!("Error in db_Consistency function")); 
+	}
+}
+function audit_Log($module_Name,$type, $from_Date, $to_Ddate)
+{
+	try
+	{
+		_click(_span($module_Name));
+		_click(_span("Admin Activity"));
+		_setSelected(_select("type"), $type);
+		_setValue(_textbox("from"), $from_Date);
+		_setValue(_textbox("to"), $to_Ddate);
+		_click(_submit("Validate"));
+	}
+	catch(ex)
+	{
+		_assert(!("Error in audit_Log function")); 
+	}
+	
+}
+/* This function updates, deletes the created profile
+
+*/
+function update_delete_Profile( $profile, $profile_Description, $profile_Val)
+{
+	try
+	{
+		//_click(_span($module_Name));
+		//_click(_span("User Management"));
+		//_click(_span("Profile"));
+		if($profile_Val == "UPDATE")
+		{
+			_setSelected(_select("id"), $profile);
+			_setValue(_textbox("description"), $profile_Description);
+			_click(_submit("Modify"));
+			_assertVisible(_div("success"));
+		} 
+		if($profile_Val == "DELETE")
+		{
+			_setSelected(_select("id"), $profile);
+			_setValue(_textbox("description"),"");
+			_click(_submit("Delete"));
+			_assertVisible(_div("success"));
+		}
+	}
+	catch(ex)
+	{
+		_assert(!("Error in update_delete_Profile function")); 
+	}	
+}
+/* Creation of Reports
+
+*/
+function reports($module_Name, $report_Name, $template, $mode, $unit, $report_Val)
+{
+	try
+	{		
+		if($report_Val == "CREATE")
+		{
+			_click(_span($module_Name));
+			//_click(_span("Reports"));
+			_click(_span("Create Report"));
+			_setValue(_textbox("name"),$report_Name);
+			_setSelected(_select("template"), $template);
+			_setSelected(_select("mode"),$mode);
+			_setSelected(_select("availableUnits"), $unit);
+			_uncheck(_checkbox("timeStamp"));
+			_uncheck(_checkbox("mail"));
+			_click(_button(">>"));
+			_click(_submit("Create"));
+			_assertVisible(_div("app-messages"));
+			_click(_span("List Reports"));
+		}  
+		if($report_Val == "DELETE")
+		{
+			_click(_span($module_Name));
+			//_click(_span("Reports"));
+			_click(_span("Create Report"));
+			_setValue(_textbox("name"),$report_Name);
+			_setSelected(_select("template"), $template);
+			_setSelected(_select("mode"),$mode);
+			_setSelected(_select("availableUnits"), $unit);
+			_uncheck(_checkbox("timeStamp"));
+			_uncheck(_checkbox("mail"));
+			_click(_button(">>"));
+			_click(_submit("Create"));
+			_assertVisible(_div("app-messages"));
+			_click(_span("List Reports"));
+		
+		}
+		
+	}
+	catch(ex)
+	{
+		_assert(!("Error in reports function")); 
+	}	
+}
+
+/* Function to create a State 
+$state_Val is set for further operation on TRANSITION (eg. modify,Delete)
+$state_Decision are taken while creating a state (final state, control transition)
+$state_Behaviour is considered while creating a state with final state option enabled
+Author : Githanjali
+*/
+
+
+function create_State($state_Val, $short_Wait, $state_Name, $state_Label, $state_Description, $state_Decision, $state_Behaviour, $state_Name1, $state_Label1, $modified_State_Description )
+{
+	try
+	{
+		//_highlight(_span("Administration"));
+		_click(_span("Administration"));
+		//_highlight(_span("Decision Workflow"));
+		_click(_span("Decision Workflow"));
+		_isVisible(_span("States"))
+		_click(_span("States"));
+		if(($state_Val == "CREATE") && ($state_Decision == "FINAL STATE"))
+		{
+			_click(_button("Create"));
+			_wait($short_Wait);
+			_setValue(_textbox("stateName"), $state_Name);
+			_setValue(_textbox("label"), $state_Label);
+			_setValue(_textarea("description"), $state_Description);
+			_click(_checkbox("finalState"));
+			_setSelected(_select("behaviour"), $state_Behaviour);
+			_click(_submit("Validate"));
+			
+			if(true == _exists(_div("success")))
+			{
+				var $get = _getText(_div("success"));
+				if(_assertContainsText("State "+$state_Name+" successfully created", $get))
+				{		
+					_log($get);		
+				}
+			}
+			else if((true == _exists(_div("error"))) || (true == _exists(_div("error[1]"))))	
+			{
+				var $get1 = _getText(_div("error"));
+				var $get2 = _getText(_div("error[1]"));	
+				if (_assertContainsText("State name"+ $state_Name +"already exists", $get1) || _assertContainsText("State label"+ $state_Label +"already exists", $get2))
+				{
+					$state_Name = $state_Name1;
+					$state_Label = $state_Label1;
+					_log($state_Name, $state_Label);
+					_click(_button("Cancel"));
+					_click(_link("Back"));
+					_click(_link("Back"));			
+											
+					create_State($state_Val, $short_Wait, $state_Name, $state_Label, $state_Description, $state_Decision, $state_Behaviour, $state_Name1, $state_Label1, $modified_State_Description );
+				}	
+			}	
+					
+		}
+		else if(($state_Val == "CREATE") && ($state_Decision == "CONTROL TRANSITION"))
+		{
+			_click(_button("Create"));
+			_wait($short_Wait);
+			_setValue(_textbox("stateName"), $state_Name);
+			_setValue(_textbox("label"), $state_Label);
+			_setValue(_textarea("description"), $state_Description);
+			_click(_checkbox("controlTransition"));
+			_click(_submit("Validate"));
+			if(true == _exists(_div("success")))
+			{
+				var $get = _getText(_div("success"));
+				if(_assertContainsText("State "+$state_Name+" successfully created", $get))
+				{		
+					_log($get);		
+				}
+			}
+			else if((true == _exists(_div("error"))) || (true == _exists(_div("error[1]"))))	
+			{
+				var $get1 = _getText(_div("error"));
+				var $get2 = _getText(_div("error[1]"));	
+				if (_assertContainsText("State name"+ $state_Name +"already exists", $get1) || _assertContainsText("State label"+ $state_Label +"already exists", $get2))
+				{
+					$state_Name = $state_Name1;
+					$state_Label = $state_Label1;
+					_log($state_Name, $state_Label);
+					_click(_button("Cancel"));
+					_click(_link("Back"));
+					_click(_link("Back"));			
+											
+					create_State($state_Val, $short_Wait, $state_Name, $state_Label, $state_Description, $state_Decision, $state_Behaviour, $state_Name1, $state_Label1, $modified_State_Description );
+				}	
+			}
+
+		}
+		else if(($state_Val == "MODIFY") && ($state_Decision == "FINAL STATE"))
+		{
+			_click(_button("Create"));
+			_wait($short_Wait);
+			_setValue(_textbox("stateName"), $state_Name);
+			_setValue(_textbox("label"), $state_Label);
+			_setValue(_textarea("description"), $state_Description);
+			_click(_checkbox("finalState"));
+			_setSelected(_select("behaviour"), $state_Behaviour);
+			_click(_submit("Validate"));
+			
+			if(true == _exists(_div("success")))
+			{
+				var $get = _getText(_div("success"));
+				if(_assertContainsText("State "+$state_Name+" successfully created", $get))
+				{		
+					_log($get);		
+				}
+			}
+			else if((true == _exists(_div("error"))) || (true == _exists(_div("error[1]"))))	
+			{
+				var $get1 = _getText(_div("error"));
+				var $get2 = _getText(_div("error[1]"));	
+				if (_assertContainsText("State name"+ $state_Name +"already exists", $get1) || _assertContainsText("State label"+ $state_Label +"already exists", $get2))
+				{
+					$state_Name = $state_Name1;
+					$state_Label = $state_Label1;
+					_log($state_Name, $state_Label);
+					_click(_button("Cancel"));
+					_click(_link("Back"));
+					_click(_link("Back"));			
+											
+					create_State($state_Val, $short_Wait, $state_Name, $state_Label, $state_Description, $state_Decision, $state_Behaviour, $state_Name1, $state_Label1, $modified_State_Description );
+				}	
+			}
+			_setValue(_textbox("namePart"), $state_Name);
+			_click(_submit("Search"));
+			_click(_radio("/id/"));
+			_isVisible(_button("Modify"));
+			_click(_button("Modify"));
+			_setValue(_textarea("description"), $modified_State_Description);
+			_isVisible(_submit("Validate"));
+			_click(_submit("Validate"));
+			if(true == _exists(_div("success")))
+			{
+				var $get = _getText(_div("success"));
+				if(_assertContainsText("State "+$state_Name+" successfully updated", $get))
+				{		
+					_log($get);		
+				}
+			}	
+		
+		
+		} 
+		else if(($state_Val == "MODIFY") && ($state_Decision == "CONTROL TRANSITION"))
+		{
+			_click(_button("Create"));
+			_wait($short_Wait);
+			_setValue(_textbox("stateName"), $state_Name);
+			_setValue(_textbox("label"), $state_Label);
+			_setValue(_textarea("description"), $state_Description);
+			_click(_checkbox("controlTransition"));
+			_click(_submit("Validate"));
+			
+			if(true == _exists(_div("success")))
+			{
+				var $get = _getText(_div("success"));
+				if(_assertContainsText("State "+$state_Name+" successfully created", $get))
+				{		
+					_log($get);		
+				}
+			}
+			else if((true == _exists(_div("error"))) || (true == _exists(_div("error[1]"))))	
+			{
+				var $get1 = _getText(_div("error"));
+				var $get2 = _getText(_div("error[1]"));	
+				if (_assertContainsText("State name"+ $state_Name +"already exists", $get1) || _assertContainsText("State label"+ $state_Label +"already exists", $get2))
+				{
+					$state_Name = $state_Name1;
+					$state_Label = $state_Label1;
+					_log($state_Name, $state_Label);
+					_click(_button("Cancel"));
+					_click(_link("Back"));
+					_click(_link("Back"));			
+											
+					create_State($state_Val, $short_Wait, $state_Name, $state_Label, $state_Description, $state_Decision, $state_Behaviour, $state_Name1, $state_Label1, $modified_State_Description );
+				}	
+			}
+			_setValue(_textbox("namePart"), $state_Name);
+			_click(_submit("Search"));
+			_click(_radio("/id/"));
+			_isVisible(_button("Modify"));
+			_click(_button("Modify"));
+			_setValue(_textarea("description"), $modified_State_Description);
+			_isVisible(_submit("Validate"));
+			_click(_submit("Validate"));
+			if(true == _exists(_div("success")))
+			{
+				var $get = _getText(_div("success"));
+				if(_assertContainsText("State "+$state_Name+" successfully updated", $get))
+				{		
+					_log($get);		
+				}
+			}	
+		
+		
+		} 
+		else if(($state_Val == "DELETE") && ($state_Decision == "FINAL STATE"))
+		{
+			_click(_button("Create"));
+			_wait($short_Wait);
+			_setValue(_textbox("stateName"), $state_Name);
+			_setValue(_textbox("label"), $state_Label);
+			_setValue(_textarea("description"), $state_Description);
+			_click(_checkbox("finalState"));
+			_setSelected(_select("behaviour"), $state_Behaviour);
+			_click(_submit("Validate"));
+			
+			if(true == _exists(_div("success")))
+			{
+				var $get = _getText(_div("success"));
+				if(_assertContainsText("State "+$state_Name+" successfully created", $get))
+				{		
+					_log($get);		
+				}
+			}
+			else if((true == _exists(_div("error"))) || (true == _exists(_div("error[1]"))))	
+			{
+				var $get1 = _getText(_div("error"));
+				var $get2 = _getText(_div("error[1]"));	
+				if (_assertContainsText("State name"+ $state_Name +"already exists", $get1) || _assertContainsText("State label"+ $state_Label +"already exists", $get2))
+				{
+					$state_Name = $state_Name1;
+					$state_Label = $state_Label1;
+					_log($state_Name, $state_Label);
+					_click(_button("Cancel"));
+					_click(_link("Back"));
+					_click(_link("Back"));			
+											
+					create_State($state_Val, $short_Wait, $state_Name, $state_Label, $state_Description, $state_Decision, $state_Behaviour, $state_Name1, $state_Label1, $modified_State_Description );
+				}	
+			}
+			_setValue(_textbox("namePart"), $state_Name);
+			_click(_submit("Search"));
+			_click(_radio("/id/"));
+			_isVisible(_button("Delete"))
+			_click(_button("Delete"));
+			_assertEqual("Do you really want to delete this state?", _lastConfirm(true));		
+			
+			if(true == _exists(_div("success")))
+			{
+				var $get = _getText(_div("success"));
+				if(_assertContainsText("State "+$state_Name+" successfully deleted", $get))
+				{		
+					_log($get);		
+				}
+			}	
+		
+		
+		} 
+		else if(($state_Val == "DELETE") && ($state_Decision == "CONTROL TRANSITION"))
+		{
+			_click(_button("Create"));
+			_wait($short_Wait);
+			_setValue(_textbox("stateName"), $state_Name);
+			_setValue(_textbox("label"), $state_Label);
+			_setValue(_textarea("description"), $state_Description);
+			_click(_checkbox("controlTransition"));
+			_click(_submit("Validate"));
+			
+			if(true == _exists(_div("success")))
+			{
+				var $get = _getText(_div("success"));
+				if(_assertContainsText("State "+$state_Name+" successfully created", $get))
+				{		
+					_log($get);		
+				}
+			}
+			else if((true == _exists(_div("error"))) || (true == _exists(_div("error[1]"))))	
+			{
+				var $get1 = _getText(_div("error"));
+				var $get2 = _getText(_div("error[1]"));	
+				if (_assertContainsText("State name"+ $state_Name +"already exists", $get1) || _assertContainsText("State label"+ $state_Label +"already exists", $get2))
+				{
+					$state_Name = $state_Name1;
+					$state_Label = $state_Label1;
+					_log($state_Name, $state_Label);
+					_click(_button("Cancel"));
+					_click(_link("Back"));
+					_click(_link("Back"));			
+											
+					create_State($state_Val, $short_Wait, $state_Name, $state_Label, $state_Description, $state_Decision, $state_Behaviour, $state_Name1, $state_Label1, $modified_State_Description );
+				}	
+			}
+			_setValue(_textbox("namePart"), $state_Name);
+			_click(_submit("Search"));
+			_click(_radio("/id/"));
+			_isVisible(_button("Delete"))
+			_click(_button("Delete"));
+			_assertEqual("Do you really want to delete this state?", _lastConfirm(true));		
+			
+			if(true == _exists(_div("success")))
+			{
+				var $get = _getText(_div("success"));
+				if(_assertContainsText("State "+$state_Name+" successfully deleted", $get))
+				{		
+					_log($get);		
+				}
+			}	
+		
+		
+		} 
+			
+	}
+	catch(ex)
+	{
+		_assert(!("Error in create_State function")); 
+	}
+}
+
+/* Function to create a TRANSITION with an already existing state
+trans_Val is set for further operation on TRANSITION (eg. Delete)
+Author : Githanjali
+*/
+
+function create_Transition( $from_State_Id, $to_State_Id , $trans_Val)
+{
+	try
+	{
+		//_highlight(_span("Administration"));
+		_click(_span("Administration"));
+		//_highlight(_span("Decision Workflow"));
+		_click(_span("Decision Workflow"));
+		​_click(_span("Transitions"));
+		_setSelected(_select("fromStateId"), $from_State_Id);
+		_setSelected(_select("toStateId"), $to_State_Id);
+		_click(_submit("Create"));
+		if(true == _exists(_div("success")))
+		{
+			var $get = _getText(_div("success"));
+			if(_assertContainsText("Transition successfully created", $get))
+			{		
+				_log($get);		
+			}
+		}
+		else if (true == _exists(_div("error")))
+		{
+			var $get1 = _getText(_div("error"));
+			if (_assertContainsText("There is already a transition having the same From state and To state.", $get1))
+			{
+				_log($get1);
+			}
+		
+		}
+		if($trans_Val == "DELETE")
+		{
+			if(true == _exists(_cell($to_State_Id+"_FROM_"+$from_State_Id)))
+			{
+				_click(_image("/Delete/", _near(_cell($to_State_Id+"_FROM_"+$from_State_Id))));		
+				//_assertEqual("Do you really want to delete the "+$to_State_Id+"_FROM_"+$from_State_Id+" transition?", _lastConfirm(true));
+				_expectConfirm("Do you really want to delete the "+$to_State_Id+"_FROM_"+$from_State_Id+" transition?", true);
+				if(true == _exists(_div("success")))
+				{
+					var $get = _getText(_div("success"));
+					if(_assertContainsText("Transition successfully deleted", $get))
+					{		
+						_log($get);		
+					}
+				}
+			
+			}	
+		
+		}
+			
+				
+	}
+		catch(ex)
+	{
+		_assert(!("Error in create_Transition function")); 
+	}
+}
+
+//Function to check created state exists under To State drop down and related transition is mapped in Profile module
+
+function toState($module_Name,$state){
+	try{
+			_click(_span($module_Name));
+			_click(_span("User Management"));
+			_click(_span("Profile"));
+		
+			_setSelected(_select("toStatesList"), $state);
+			//_assertEqual($state+"_FROM_"+$state, _getSelectedText(_select("availableDecisions")));
+			
+			_assertExists(_option($state+"_FROM_"+$state));
+	
+	
+	
+	}catch(ex){
+		
+			_assert(!("Error in toState function"));
+	}
+}
+/* Function to validate the actions done on the transaction/message
+
+
+*/
+function checkHistory($module_Name){
+	try{
+		_click(_span($module_Name));
+		_wait(5000);
+		_click(_image("history.gif"));
+		
+		var $data = _getText(_table("messages laTable"));
+			$data = $data.split("|");
+			//var $rows1 = $table1.rows;
+			//var $get = _getText(_row("even"));
+			//$get = $get.split("|");
+			_log($data);
+			for(var $i=0 ; $i < $data.length; $i++)
+						{
+							_log("Inside for");
+							var $geteven = _getText(_row("even["+$i+"]"));
+							var $getodd = _getText(_row("odd["+$i+"]"));
+							$geteven = $geteven.split("|");
+							$getodd = $getodd.split("|");
+							_log($geteven);
+							_log($getodd);
+						}
+		}catch(ex){
+			
+			_assert(!("Error in checkHistory function"));
+		
+		}
+}
+
+/* Function to perform filters in History tab
+Param:
+	$module_Name : User can specify any module which user wants to create view.(Module name are listed in the Parameter file)
+	$pop_Up_Window: Search window
+	$filter_Column: Name of the column the column to be filtered
+	$filter_operator: Operator
+	$filer_value: User selected value
+
+*/
+function setUserDefinedFilter($module_Name, $pop_Up_Window, $filter_Column, $filter_operator, $filer_value){
+
+	try{
+			_click(_span($module_Name));
+			_click(_image("Search"));
+			_selectWindow($pop_Up_Window);
+			_setSelected(_select(0), $filter_Column);
+			_setSelected(_select(1), $filter_operator);
+			_setValue(_textbox(1), $filer_value);
+			_click(_button("Validate"));
+			_popup($pop_Up_Window)._closeWindow();
+			_selectWindow();
+			
+	
+	}catch(ex){
+		
+		_assert(!("Error in setUserDefinedFilter function"));
+	}
+
+
+
+}
+
+
+
+
+
+
+

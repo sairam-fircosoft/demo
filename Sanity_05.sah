@@ -1,0 +1,19 @@
+/* Validate the database consistency with checking/unchecking the checkbox for all units that are defined
+
+$URL: TRUST Application url
+$USER_NAME: User name
+$PASSWORD: Password
+$MODULE_NAME : Administration
+
+*/
+
+
+_include("Common.sah");
+	
+initBrowser();
+
+login($URL, $USER_NAME, $PASSWORD); 
+
+db_Consistency($MODULE_NAME[0]);
+
+logout();

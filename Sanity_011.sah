@@ -1,0 +1,33 @@
+/* Validate when user selects a particular state Under "To State" drop down lists in Profile module (User Management), the mapped transitions to that state are getting displayed in the Available Transitions lists
+
+
+
+
+
+
+*/
+
+
+
+
+_include("Common.sah");
+	
+initBrowser();
+
+login($URL, $USER_NAME, $PASSWORD); 
+
+create_State($STATE_VAL[1], $SHORT_WAIT, $STATE_NAME, $STATE_LABEL, $STATE_DESCRIPTION, $STATE_DECISION[0], $STATE_BEHAVIOUR[1], $STATE_NAME1, $STATE_LABEL1, $MODIFIED_STATE_DESCRIPTION );
+
+_click(_link("Back"));
+
+_click(_link("Back"));
+
+create_Transition( $STATE_NAME, $STATE_NAME , $TRANS_VAL[1]);
+
+_click(_link("Back"));
+
+_click(_link("Back"));
+
+toState($MODULE_NAME[0], $STATE_NAME);
+
+logout();

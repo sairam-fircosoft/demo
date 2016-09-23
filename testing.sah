@@ -1,0 +1,8 @@
+_navigateTo("http://10.19.4.11:9080/trust/");
+		_setValue(_textbox("login"), "");
+		_setValue(_password("password"), "");
+
+		_click(_imageSubmitButton(0));
+
+
+_assertExists(_cell("Both fields are mandatory"));

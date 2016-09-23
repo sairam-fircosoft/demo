@@ -1,0 +1,28 @@
+/* Validate whether system displays the Users list along with the details for the selected user and for the selected profile
+
+$URL: TRUST Application url
+$USER_NAME: User name
+$PASSWORD: Password
+$MODULE_NAME : Audit
+$PROFILE_RIGHTS: Profile rights chosen by the user - ALL RIGHTS
+$FROM_DATE:  Search to be performed from the date
+$TO_DATE: Search to be performed till date
+$DATE_VAL: VALIDATION & DATE VALIIDATION
+
+*/
+
+_include("Common.sah");
+	
+initBrowser();
+
+login($URL, $USER_NAME, $PASSWORD); 
+
+users_List($MODULE_NAME[1], $USER_NAME, $PROFILE_RIGHTS[0], $FROM_DATE, $TO_DATE, $DATE_VAL[1] );
+
+logout();
+
+login($URL, $USER_NAME, $PASSWORD); 
+
+users_List($MODULE_NAME[1], $USER_NAME, $PROFILE_RIGHTS[0], $FROM_DATE, $TO_DATE, $DATE_VAL[0] );
+
+logout();

@@ -1,0 +1,11 @@
+//Verify whether user is able to perfom filters with any of the fields
+
+_include("Common.sah");
+	
+initBrowser();
+
+login($URL, $USER_NAME, $PASSWORD); 
+
+setUserDefinedFilter($MODULE_NAME[3], $POP_UP_WINDOW, $FILTER_COLUMN, $FILTER_OPERATOR, $FILTER_VALUE);
+
+logout();

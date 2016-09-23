@@ -1,0 +1,72 @@
+/* Creation/Updation/Deletion of Unit
+$URL: TRUST Application url
+$USER_NAME: User name
+$PASSWORD: Password
+$MODULE_NAME : Administration
+$UNIT : New Unit Created
+$COMMENT: Comment  for the newly created Unit
+$UNIT_VAL[1] : CREATION
+$TYPE: UNIT
+$FROM_DATE; Search to be performed on the from date
+$TO_DATE: Search to be performed Till date
+$UNIT_VAL[2]: MODIFICATION
+$UNIT_VAL[3]: DELETION
+*/
+
+
+_include("Common.sah");
+	
+initBrowser();
+
+//login($URL, $USER_NAME, $PASSWORD); 
+
+//createUnit($MODULE_NAME[0], $UNIT, $UNIT_VAL[0]);
+
+//logout();
+
+login($URL, $USER_NAME, $PASSWORD); 
+
+createUnit($MODULE_NAME[0], $UNIT, $COMMENT[0], $UNIT_VAL[1]);
+
+_click(_link("Back"));
+
+_click(_link("Back"));
+
+audit_Log($MODULE_NAME[1],$TYPE[0], $FROM_DATE, $TO_DATE);
+
+var $createUnit=_getText(_div($UNIT));
+
+_log($createUnit);
+
+logout();
+
+login($URL, $USER_NAME, $PASSWORD); 
+
+createUnit($MODULE_NAME[0], $UNIT, $COMMENT[2], $UNIT_VAL[2]);
+
+_click(_link("Back"));
+
+_click(_link("Back"));
+
+audit_Log($MODULE_NAME[1],$TYPE[0], $FROM_DATE, $TO_DATE);
+
+var $createUnit=_getText(_div($UNIT));
+
+_log($createUnit);
+
+logout();
+
+
+login($URL, $USER_NAME, $PASSWORD); 
+
+createUnit($MODULE_NAME[0], $UNIT, $COMMENT[2], $UNIT_VAL[3]);
+
+_click(_link("Back"));
+
+_click(_link("Back"));
+
+audit_Log($MODULE_NAME[1],$TYPE[0], $FROM_DATE, $TO_DATE);
+
+_assertVisible(_cell("DELETION", _under(_div($UNIT))));
+
+logout();

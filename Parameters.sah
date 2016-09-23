@@ -1,0 +1,111 @@
+//Parameters File for TRUST
+
+var $BROWSER_TYPE = "IE";
+//URL of Appliication
+var $URL = "http://10.19.4.18:8080/Trust4550/";
+
+//User Credentials
+var $USER_NAME = "SAIRAM";
+var $PASSWORD = "Hello00";
+var $ADMIN_USER = "KUMAR";
+
+//User Name generator
+
+//var $text = "";
+//var $possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+//$text += $possible.charAt(Math.floor(Math.random() * $possible.length));
+
+var $ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+var $NEWLETER = $ALPHABET.charAt(Math.round(26 * Math.random()));
+
+//Random User name parameters
+
+var $NEW_USER = "User_" + $BROWSER_TYPE + "_" + $NEWLETER + _random(100);
+
+var $NEW_PASSWORD= "Fircosoft123";
+var $CONFIRM_PASSWORD = "Fircosoft123";
+ 
+var $LANG = ["ENGLISH", "FRENCH"];
+
+var $PROFILE = "PROFILE_" + $BROWSER_TYPE + "_" + $NEWLETER + _random(100);
+
+var $UNIT = "UNIT" + $BROWSER_TYPE + "_" + $NEWLETER + _random(100);
+
+var $PROFILE_VAL = ["VALIDATION","CREATION", "UPDATE","DELETE"];
+
+var $UNIT_VAL = ["VALIDATION","CREATION", "MODIFICATION", "DELETION"];
+ 
+var $PROFILE_DESCRIPTION = "TESTING";
+
+var $AVAILABLE_UNITS = ["ALL", "FIRCO", "FIRCO"];
+
+var $SHORT_WAIT= 5000;
+
+var $USER_COLUMN_LIST = ["Administration", "Workgroup Management", "Review Records", "Reports", "Batches Log", "Statistics", "Audit"];
+
+var $COLUMN_LIST = [$USER_COLUMN_LIST];
+
+var $COMMENT = ["Comment1", "Comment2", "Modified", "Modified again", "Modified again for testing"];
+
+var $TYPE = ["Unit", "Profile"];
+
+var $BUTTON_VAL = ["VALIDATION", "CREATION"];
+
+var $MODULE_NAME = ["Administration", "Audit", "Reports", "Review Records"];
+
+var $PROFILE_RIGHTS = ["ALL_RIGHTS"];
+
+var $STATE = ["TRUE", "FALSE", "PENDING"];
+
+var $DECISION = ["TRUE_FROM_NEW"];
+
+var $FROM_DATE = "2016/09/21";
+var $TO_DATE = "2016/09/21";
+
+var $DATE_VAL = ["VALIDATION", "DATE VALIDATION"];
+
+var $REPORT_NAME = "REPORT"+ "_" + $NEWLETER + _random(100)+".doc";
+
+var $TEMPLATE = "FOFDBS.ftr";
+
+var $MODE = ["All reports", "18-18", "Today"];
+
+var $REPORT_VAL = ["CREATE", "DELETE"];
+
+var $STATE_VAL = ["SEARCH", "CREATE", "MODIFY", "DELETE"];
+
+var $STATE_NAME = "STATE_" + $BROWSER_TYPE + "_" + $NEWLETER + _random(100);
+
+var $STATE_LABEL = $NEWLETER + _random(100);
+
+var $STATE_NAME1 = "STATE_" + $BROWSER_TYPE + "_" + $NEWLETER + _random(100);
+
+var $STATE_LABEL1 = $NEWLETER + _random(100);
+
+var $STATE_DESCRIPTION = "DESCRIPTION OF THE STATE";
+
+var $STATE_DECISION = ["FINAL STATE", "CONTROL TRANSITION"];
+
+var $STATE_BEHAVIOUR = ["FALSE", "TRUE"];
+
+var $TRANS_VAL = ["DELETE", "NO"];
+
+var $FROM_STATE_ID = ["NEW", "FALSE", "TRUE", "PENDING", "RENEW"];
+
+var $TO_STATE_ID = ["NEW", "FALSE", "TRUE", "PENDING", "RENEW"];
+
+var $MODIFIED_STATE_DESCRIPTION = "MODIFIED DESCRIPTION OF THE STATE";
+
+var $POP_UP_WINDOW = "AdvancedWindow";
+
+var $FILTER_COLUMN = "Unit";
+
+var $FILTER_OPERATOR = "is equal to";
+
+var $FILTER_VALUE = "ALL";
+
+var $LOGIN_VAL = ["VALIDATION1", "VALIDATION2", "VALIDATION3", "VALIDATION4"];
+
+var $User1 = "SAI-RAM";
+
+var $pass1 = "abcd";
