@@ -2,7 +2,7 @@
 
 var $BROWSER_TYPE = "IE";
 //URL of Appliication
-var $URL = "http://10.19.4.18:8080/Trust46000/";
+var $URL = "http://10.19.4.18:8080/Trust4600/";
 
 //User Credentials
 var $USER_NAME = "SAIRAM";
